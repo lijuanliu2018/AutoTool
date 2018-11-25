@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.tanjinc.autotool"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.SET_ALARM"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <service android:name=".WorkService" />
+        <service
+            android:name=".AutoClickService"
+            android:exported="false"
+            android:label="a自动点击Demo"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <!-- 配置服务服务配置文件路径 -->
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessible_service_config" />
+        </service>
+
+
+        <receiver android:name=".AlarmReceiver"/>
+    </application>
+
+</manifest>
