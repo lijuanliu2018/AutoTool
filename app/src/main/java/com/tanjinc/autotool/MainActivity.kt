@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
+import android.content.SharedPreferences
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -40,6 +41,29 @@ class MainActivity : AppCompatActivity() {
         testBtn.setOnClickListener {
             Toast.makeText(this, "aaaaaa", Toast.LENGTH_SHORT).show()
         }
+        qiandaoBtn.setOnClickListener {
+
+            SharePreferenceUtil.putSharePreference(Constants.QIANDAO_TASK, true)
+            putSharePreference("qiandao_task", true)
+            intent.setClassName("com.jifen.qukan", "com.jifen.qkbase.main.MainActivity")
+            startActivity(intent)
+        }
+    }
+
+
+    private fun putSharePreference(key:String, value: Any) {
+        val sp  = getSharedPreferences("auto_tool", Context.MODE_PRIVATE).edit()
+        when(value) {
+            is Boolean -> sp.putBoolean(key, value)
+            is Int -> sp.putInt(key, value)
+            is String -> sp.putString(key, value)
+        }
+        sp.apply()
+    }
+
+    private fun getSharePreference(key: String) : Any {
+        val sp  = getSharedPreferences("auto_tool", Context.MODE_PRIVATE)
+        return sp.getBoolean(key, true)
     }
 
     private fun requestPermission() {

@@ -5,5 +5,4 @@
                        android:accessibilityFlags="flagReportViewIds"
                        android:accessibilityFeedbackType="feedbackSpoken"
                        android:notificationTimeout="100"
-                       android:packageNames="com.tanjinc.autotool,com.jifen.qukan"
                        android:canRetrieveWindowContent="true"/>
