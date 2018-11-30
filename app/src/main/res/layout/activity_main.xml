@@ -9,10 +9,23 @@
     android:gravity="center_horizontal"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/permissionWarmTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="12sp"
+        android:padding="8dp"
+        android:text="辅助功能未开启，请在 辅助功能->无障碍->趣头条 打开, 前往>>"/>
+
     <Button
         android:id="@+id/startBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+        android:visibility="gone"
         android:text="click"/>
 
     <Button
@@ -20,31 +33,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="sett permission"/>
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+        android:visibility="gone"
+        android:text="设置权限"/>
     <Button
         android:id="@+id/qiandaoBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+
         android:text="签到任务"/>
     <Button
         android:id="@+id/shiwanBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+
         android:text="试玩任务"/>
     <Button
         android:id="@+id/cancelBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+
         android:text="取消任务"/>
     <Button
         android:id="@+id/videoBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
+
         android:text="看小视频"/>
     <Button
         android:id="@+id/testBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:textColor="#FFF"
+        android:layout_margin="5dp"
         android:text="test"/>
 
 </LinearLayout>

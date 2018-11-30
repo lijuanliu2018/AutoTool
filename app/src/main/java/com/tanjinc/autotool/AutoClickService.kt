@@ -61,12 +61,13 @@ class AutoClickService : AccessibilityService() {
         super.onCreate()
         mBrocardReceiver = MyBroadcastReceiver()
         registerReceiver(mBrocardReceiver, IntentFilter("StartWork"))
-
-
     }
     override fun onInterrupt() {
     }
 
+    private fun toast(msg:CharSequence) {
+        Toast.makeText(MyApplication.getApplication(), msg, Toast.LENGTH_SHORT).show()
+    }
     override fun onServiceConnected() {
         super.onServiceConnected()
         //设置关心的事件类型
@@ -84,15 +85,7 @@ class AutoClickService : AccessibilityService() {
         var rootInActiveWindow = rootInActiveWindow
         if (event != null && rootInActiveWindow != null) {
             Log.d(TAG, "event type = " + event.eventType)
-            when(event.eventType) {
-                AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> {
-                    var data = event.parcelableData
-                    if (data is Notification) {
-                        var notification: Notification = data
-                        Log.d(TAG, "notification= "+notification.tickerText)
-                    }
-                }
-            }
+
             when(event.packageName) {
                 mQutoutiaoPackage -> {
                     Log.d(TAG, "onAccessibilityEvent " + event.text)
@@ -101,11 +94,19 @@ class AutoClickService : AccessibilityService() {
                     closeAdDialog()
 
                     //读取通知栏
-                    if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
-                        if (event.parcelableData is Notification) {
-                            val notification:Notification = event.parcelableData as Notification
-                            val content = notification.tickerText.toString()
-                            Log.d(TAG, "notification $content")
+                    when(event.eventType) {
+                        AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> {
+                            var data = event.parcelableData
+                            if (data is Notification) {
+                                var notification: Notification = data
+                                Log.d(TAG, "notification= "+notification.tickerText)
+                                toast(notification.tickerText)
+                                notification.contentIntent.send()
+                                launch {
+                                    delay(3 * 1000)
+                                    performGlobalAction(GLOBAL_ACTION_BACK)
+                                }
+                            }
                         }
                     }
 
@@ -210,6 +211,7 @@ class AutoClickService : AccessibilityService() {
         clickByText("继续")
         clickByText("下一步")
         clickById("com.android.packageinstaller:id/decide_to_continue")
+        clickById("com.android.packageinstaller:id/action_positive")
         clickByText("继续安装")
         clickByText("打开阅读")
     }
@@ -235,15 +237,17 @@ class AutoClickService : AccessibilityService() {
         }
         try {
             val targetNodeInfo = rootInActiveWindow?.findAccessibilityNodeInfosByText(text)
+            var clicked = false
             if(targetNodeInfo != null && targetNodeInfo.size> 0 ) {
                 for (i in 0 until targetNodeInfo.size) {
                     if (targetNodeInfo[i]?.text == text) {
-                        if (targetNodeInfo[i].isClickable) {
+                        clicked = targetNodeInfo[i].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (!clicked) {
+                            clicked = targetNodeInfo[i]?.parent?.performAction(AccessibilityNodeInfo.ACTION_CLICK)!!
+                        }
+                        if (clicked) {
                             Log.d(TAG, "clickByText click $text success")
-                            return targetNodeInfo[i].performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        } else {
-                            Log.d(TAG, "clickByText click $text parent success")
-                            return targetNodeInfo[i]?.parent?.performAction(AccessibilityNodeInfo.ACTION_CLICK)!!
+                            return true
                         }
                     }
                 }
@@ -251,6 +255,8 @@ class AutoClickService : AccessibilityService() {
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
+        Log.d(TAG, "clickByText click $text fail")
+
         return false
     }
 

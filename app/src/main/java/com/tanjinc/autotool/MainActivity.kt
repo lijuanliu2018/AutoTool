@@ -1,6 +1,7 @@
 package com.tanjinc.autotool
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.media.projection.MediaProjectionManager
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 
 
@@ -16,23 +18,25 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
     val REQUEST_MEDIA_PROJECTION = 18
+    val sAccessibilityServiceName = AutoClickService::class.java.name
 
+    var mIsPermissionGain = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         startBtn.setOnClickListener {
+            PermissionUtil.openAccessibility(this, AutoClickService::class.java.name)
 //            requestPermission()
 //            startService((Intent(this, WorkService::class.java)))
-            startQuToutiao()
-            sendBroadcast(Intent("StartWork"))
+//            startQuToutiao()
+//            sendBroadcast(Intent("StartWork"))
         }
 
         settingBtn.setOnClickListener {
-            Toast.makeText(this, "click!!", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "click ==")
-            jumpToSettingPage(this)
+            PermissionUtil.openAccessibility(this, sAccessibilityServiceName)
         }
 
         testBtn.setOnClickListener {
@@ -41,26 +45,40 @@ class MainActivity : AppCompatActivity() {
 //            Toast.makeText(this, if(isEnable) "enable" else "not enable", Toast.LENGTH_SHORT).show()
         }
         qiandaoBtn.setOnClickListener {
-            cleanTask()
-            SharePreferenceUtil.putBoolean(Constants.QIANDAO_TASK, true)
-            startQuToutiao()
+            if (checkAccesibilityPermission()) {
+                cleanTask()
+                SharePreferenceUtil.putBoolean(Constants.QIANDAO_TASK, true)
+                startQuToutiao()
+            }
         }
         cancelBtn.setOnClickListener {
             cleanTask()
         }
 
         shiwanBtn.setOnClickListener {
-            cleanTask()
-            SharePreferenceUtil.putBoolean(Constants.SHIWAN_TASK, true)
-            startQuToutiao()
+            if (checkAccesibilityPermission()) {
+                cleanTask()
+                SharePreferenceUtil.putBoolean(Constants.SHIWAN_TASK, true)
+                startQuToutiao()
+            }
         }
         videoBtn.setOnClickListener {
-            cleanTask()
-            SharePreferenceUtil.putBoolean(Constants.VIDEO_TASK, true)
-            startQuToutiao()
+            if (checkAccesibilityPermission()) {
+                cleanTask()
+                SharePreferenceUtil.putBoolean(Constants.VIDEO_TASK, true)
+                startQuToutiao()
+            }
         }
+
     }
 
+
+    private fun checkAccesibilityPermission() : Boolean {
+        if (!mIsPermissionGain) {
+            Toast.makeText(this, "没有开启辅助功能权限，请打开", Toast.LENGTH_SHORT).show()
+        }
+        return mIsPermissionGain
+    }
     private fun cleanTask() {
         SharePreferenceUtil.putBoolean(Constants.SHIWAN_TASK, false)
         SharePreferenceUtil.putBoolean(Constants.QIANDAO_TASK, false)
@@ -69,6 +87,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startQuToutiao() {
+        if (!checkAccesibilityPermission()) {
+            return
+        }
         val intent = Intent()
         intent.setClassName("com.jifen.qukan", "com.jifen.qkbase.main.MainActivity")
         startActivity(intent)
@@ -81,6 +102,16 @@ class MainActivity : AppCompatActivity() {
                 REQUEST_MEDIA_PROJECTION)
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        mIsPermissionGain = PermissionUtil.isAccessibilitySettingsOn(this, sAccessibilityServiceName)
+        permissionWarmTv.setOnClickListener {
+            PermissionUtil.openAccessibility(this, sAccessibilityServiceName)
+        }
+        permissionWarmTv.visibility = if (mIsPermissionGain) View.GONE else View.VISIBLE
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -90,18 +121,6 @@ class MainActivity : AppCompatActivity() {
                     FloatWindowsService.Companion.setResultData(data)
                     startService(Intent(applicationContext, FloatWindowsService::class.java))
                 }
-        }
-
-    }
-
-
-    fun jumpToSettingPage(context: Context) {
-        try {
-
-
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            startActivity(intent)
-        } catch (ignore: Exception) {
         }
 
     }

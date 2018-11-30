@@ -22,7 +22,7 @@
         <service
             android:name=".AutoClickService"
             android:exported="false"
-            android:label="a自动点击Demo"
+            android:label="趣头条辅助"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
