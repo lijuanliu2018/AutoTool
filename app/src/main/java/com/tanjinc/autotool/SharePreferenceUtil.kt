@@ -7,17 +7,15 @@ import android.content.Context
  */
 class SharePreferenceUtil {
     companion object {
-        public fun putSharePreference(key:String, value: Any) {
+        fun putBoolean(key:String, value: Boolean) {
             val sp  = MyApplication.getApplication().getSharedPreferences("auto_tool", Context.MODE_PRIVATE).edit()
             when(value) {
                 is Boolean -> sp.putBoolean(key, value)
-                is Int -> sp.putInt(key, value)
-                is String -> sp.putString(key, value)
             }
             sp.apply()
         }
 
-        public fun getSharePreference(key: String) : Any {
+        fun getBoolean(key: String) : Boolean {
             val sp  = MyApplication.getApplication().getSharedPreferences("auto_tool", Context.MODE_PRIVATE)
             return sp.getBoolean(key, true)
         }

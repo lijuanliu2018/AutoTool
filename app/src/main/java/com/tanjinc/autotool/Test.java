@@ -3,6 +3,9 @@ package com.tanjinc.autotool;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+
 
 public class Test extends Activity{
     private void test() {

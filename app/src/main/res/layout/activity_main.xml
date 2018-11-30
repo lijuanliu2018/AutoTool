@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".MainActivity">
 
     <Button
@@ -21,10 +22,25 @@
         android:layout_alignParentBottom="true"
         android:text="sett permission"/>
     <Button
+        android:id="@+id/qiandaoBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/qiandaoBtn"
         android:text="签到任务"/>
+    <Button
+        android:id="@+id/shiwanBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="试玩任务"/>
+    <Button
+        android:id="@+id/cancelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="取消任务"/>
+    <Button
+        android:id="@+id/videoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="看小视频"/>
     <Button
         android:id="@+id/testBtn"
         android:layout_width="wrap_content"

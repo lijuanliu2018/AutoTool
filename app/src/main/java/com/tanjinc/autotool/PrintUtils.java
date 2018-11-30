@@ -10,17 +10,15 @@ import android.view.accessibility.AccessibilityEvent;
  */
 public class PrintUtils {
     public static void log(CharSequence log) {
-        Log.i("test", log + "");
+        Log.i("PrintUtils", log + "");
     }
 
     public static void printEvent(AccessibilityEvent event) {
         log("-------------------------------------------------------------");
         int eventType = event.getEventType();
-        log("id:" + event.getWindowId());
         log("packageName:" + event.getPackageName() + "");
-        log("source:" + event.getSource() + "");
-        log("source class:" + event.getClassName() + "");
-        log("event type(int):" + eventType + "");
+//        log("source class:" + event.getClassName() + "");
+//        log("event type(int):" + eventType + "");
 
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:// 通知栏事件

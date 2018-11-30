@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
-import android.content.SharedPreferences
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -26,10 +25,8 @@ class MainActivity : AppCompatActivity() {
         startBtn.setOnClickListener {
 //            requestPermission()
 //            startService((Intent(this, WorkService::class.java)))
-            intent.setClassName("com.jifen.qukan", "com.jifen.qkbase.main.MainActivity")
-            startActivity(intent)
+            startQuToutiao()
             sendBroadcast(Intent("StartWork"))
-
         }
 
         settingBtn.setOnClickListener {
@@ -39,31 +36,42 @@ class MainActivity : AppCompatActivity() {
         }
 
         testBtn.setOnClickListener {
-            Toast.makeText(this, "aaaaaa", Toast.LENGTH_SHORT).show()
+
+//            val isEnable = PermissionUtil.isNotificationEnabled(this)
+//            Toast.makeText(this, if(isEnable) "enable" else "not enable", Toast.LENGTH_SHORT).show()
         }
         qiandaoBtn.setOnClickListener {
+            cleanTask()
+            SharePreferenceUtil.putBoolean(Constants.QIANDAO_TASK, true)
+            startQuToutiao()
+        }
+        cancelBtn.setOnClickListener {
+            cleanTask()
+        }
 
-            SharePreferenceUtil.putSharePreference(Constants.QIANDAO_TASK, true)
-            putSharePreference("qiandao_task", true)
-            intent.setClassName("com.jifen.qukan", "com.jifen.qkbase.main.MainActivity")
-            startActivity(intent)
+        shiwanBtn.setOnClickListener {
+            cleanTask()
+            SharePreferenceUtil.putBoolean(Constants.SHIWAN_TASK, true)
+            startQuToutiao()
+        }
+        videoBtn.setOnClickListener {
+            cleanTask()
+            SharePreferenceUtil.putBoolean(Constants.VIDEO_TASK, true)
+            startQuToutiao()
         }
     }
 
+    private fun cleanTask() {
+        SharePreferenceUtil.putBoolean(Constants.SHIWAN_TASK, false)
+        SharePreferenceUtil.putBoolean(Constants.QIANDAO_TASK, false)
+        SharePreferenceUtil.putBoolean(Constants.VIDEO_TASK, false)
 
-    private fun putSharePreference(key:String, value: Any) {
-        val sp  = getSharedPreferences("auto_tool", Context.MODE_PRIVATE).edit()
-        when(value) {
-            is Boolean -> sp.putBoolean(key, value)
-            is Int -> sp.putInt(key, value)
-            is String -> sp.putString(key, value)
-        }
-        sp.apply()
     }
 
-    private fun getSharePreference(key: String) : Any {
-        val sp  = getSharedPreferences("auto_tool", Context.MODE_PRIVATE)
-        return sp.getBoolean(key, true)
+    private fun startQuToutiao() {
+        val intent = Intent()
+        intent.setClassName("com.jifen.qukan", "com.jifen.qkbase.main.MainActivity")
+        startActivity(intent)
     }
 
     private fun requestPermission() {
@@ -85,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
 
     fun jumpToSettingPage(context: Context) {
         try {
