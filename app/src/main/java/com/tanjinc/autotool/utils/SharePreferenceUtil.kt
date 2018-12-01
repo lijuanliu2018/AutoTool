@@ -1,6 +1,7 @@
-package com.tanjinc.autotool
+package com.tanjinc.autotool.utils
 
 import android.content.Context
+import com.tanjinc.autotool.MyApplication
 
 /**
  * Author by tanjincheng, Date on 18-11-26.

@@ -1,4 +1,4 @@
-package com.tanjinc.autotool;
+package com.tanjinc.autotool.utils;
 
 import android.Manifest;
 import android.app.Activity;

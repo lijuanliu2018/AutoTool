@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
+import com.tanjinc.autotool.utils.PrintUtils
+import com.tanjinc.autotool.utils.SharePreferenceUtil
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import java.lang.Exception
@@ -29,6 +31,7 @@ class AutoClickService : AccessibilityService() {
     private val mPacketInstaller = "com.samsung.android.packageinstaller"
 
     private var mIsScrollIng = false
+    private var mIsNotificationTask = false
 
     val MSG_REFRESH_VIDEO = 100
     val MSG_RETURN_QU = 101
@@ -94,6 +97,9 @@ class AutoClickService : AccessibilityService() {
                     closeAdDialog()
 
                     //读取通知栏
+                    if(mIsNotificationTask) {
+                        return
+                    }
                     when(event.eventType) {
                         AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> {
                             var data = event.parcelableData
@@ -102,9 +108,11 @@ class AutoClickService : AccessibilityService() {
                                 Log.d(TAG, "notification= "+notification.tickerText)
                                 toast(notification.tickerText)
                                 notification.contentIntent.send()
+                                mIsNotificationTask = true
                                 launch {
-                                    delay(3 * 1000)
+                                    delay(5 * 1000)
                                     performGlobalAction(GLOBAL_ACTION_BACK)
+                                    mIsNotificationTask = false
                                 }
                             }
                         }
@@ -161,7 +169,7 @@ class AutoClickService : AccessibilityService() {
                             scrollView?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                         }
                     }
-                    val readPage = true
+                    val readPage = false
                     if (readPage) {
                         val webNodeInfo = findByViewName(rootInActiveWindow, "android.webkit.WebView")
                         if (webNodeInfo!= null && webNodeInfo.isScrollable && !mIsScrollIng) {
@@ -190,7 +198,7 @@ class AutoClickService : AccessibilityService() {
                     }
                 }
                 "com.android.packageinstaller" ->  installTask()
-                mPacketInstaller -> installTask()
+                "com.samsung.android.packageinstaller" -> installTask()
                 "com.android.systemui" -> {
                     val nodeInfo = rootInActiveWindow.findAccessibilityNodeInfosByViewId("com.android.systemui:id/img")
                     if (mIsShowResent) {

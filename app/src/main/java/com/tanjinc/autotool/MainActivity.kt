@@ -1,17 +1,18 @@
 package com.tanjinc.autotool
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.media.projection.MediaProjectionManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
-import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.tanjinc.autotool.utils.PermissionUtil
+import com.tanjinc.autotool.utils.SharePreferenceUtil
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,11 +22,16 @@ class MainActivity : AppCompatActivity() {
     val sAccessibilityServiceName = AutoClickService::class.java.name
 
     var mIsPermissionGain = false
+    lateinit var mActivity: AppCompatActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        mActivity = this
+        permissionWarmTv.setOnClickListener {
+            PermissionUtil.openAccessibility(this, sAccessibilityServiceName)
+        }
 
         startBtn.setOnClickListener {
             PermissionUtil.openAccessibility(this, AutoClickService::class.java.name)
@@ -105,11 +111,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mIsPermissionGain = PermissionUtil.isAccessibilitySettingsOn(this, sAccessibilityServiceName)
-        permissionWarmTv.setOnClickListener {
-            PermissionUtil.openAccessibility(this, sAccessibilityServiceName)
+        launch {
+            mIsPermissionGain = PermissionUtil.isAccessibilitySettingsOn(mActivity, sAccessibilityServiceName)
+            launch(UI) {
+                permissionWarmTv.visibility = if (mIsPermissionGain) View.GONE else View.VISIBLE
+            }
         }
-        permissionWarmTv.visibility = if (mIsPermissionGain) View.GONE else View.VISIBLE
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
